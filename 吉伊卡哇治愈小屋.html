@@ -1,0 +1,3069 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>吉伊卡哇 - 治愈小屋 🌸</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #ffeef8 0%, #ffe0f0 50%, #ffd6e7 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* 简化的背景特效 */
+        .bg-decoration {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .floating-element {
+            position: absolute;
+            animation: float 8s infinite ease-in-out;
+            opacity: 0.3;
+            font-size: 20px;
+        }
+
+        @keyframes float {
+            0%, 100% { 
+                transform: translateY(0) rotate(0deg); 
+            }
+            50% { 
+                transform: translateY(-15px) rotate(5deg); 
+            }
+        }
+
+        /* 登录界面 */
+        .login-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 238, 248, 0.95), rgba(255, 224, 240, 0.95));
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: all 0.5s ease;
+        }
+
+        .login-container.hidden {
+            opacity: 0;
+            transform: scale(0.9);
+            pointer-events: none;
+        }
+
+        .login-box {
+            background: white;
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(255, 182, 193, 0.2);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 182, 193, 0.05), transparent);
+            animation: shimmer 4s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .login-characters {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .login-character {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #ffd6e7;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            animation: characterBounce 2s infinite ease-in-out;
+        }
+
+        @keyframes characterBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .login-character:hover {
+            transform: scale(1.1);
+            border-color: #ff6b9d;
+            box-shadow: 0 4px 12px rgba(255, 107, 157, 0.3);
+        }
+
+        .login-character.selected {
+            border-color: #ff6b9d;
+            border-width: 3px;
+            transform: scale(1.15);
+        }
+
+        .login-title {
+            font-size: 28px;
+            color: #ff6b9d;
+            margin-bottom: 15px;
+            font-weight: bold;
+            text-shadow: 1px 1px 3px rgba(255, 107, 157, 0.1);
+        }
+
+        .login-subtitle {
+            color: #ff8fab;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+
+        .login-input {
+            width: 100%;
+            padding: 12px 20px;
+            border: 2px solid #ffd6e7;
+            border-radius: 20px;
+            font-size: 15px;
+            background: #fff5f8;
+            margin: 10px 0;
+            transition: all 0.3s ease;
+        }
+
+        .login-input:focus {
+            outline: none;
+            border-color: #ff6b9d;
+            background: white;
+            transform: scale(1.02);
+            box-shadow: 0 3px 10px rgba(255, 107, 157, 0.15);
+        }
+
+        .login-btn {
+            background: linear-gradient(135deg, #ff6b9d, #ff8fab);
+            color: white;
+            border: none;
+            padding: 12px 40px;
+            border-radius: 20px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 157, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .login-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 157, 0.3);
+        }
+
+        /* 头像选择 */
+        .avatar-selection {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 5px 15px rgba(255, 182, 193, 0.15);
+        }
+
+        .avatar-title {
+            color: #ff6b9d;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .avatar-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .avatar-option {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #ffd6e7;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .avatar-option:hover {
+            transform: scale(1.1);
+            border-color: #ff6b9d;
+        }
+
+        .avatar-option.selected {
+            border-color: #ff6b9d;
+            border-width: 3px;
+            transform: scale(1.1);
+        }
+
+        /* 主界面 */
+        .main-container {
+            display: none;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .main-container.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* 顶部导航 */
+        .header {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(255, 182, 193, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            color: #ff6b9d;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .nav-tab {
+            background: #fff5f8;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 15px;
+            color: #ff6b9d;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 13px;
+        }
+
+        .nav-tab.active {
+            background: linear-gradient(135deg, #ff6b9d, #ff8fab);
+            color: white;
+        }
+
+        .nav-tab:hover {
+            transform: scale(1.05);
+            background: #ffe0f0;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #ffd6e7;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .user-avatar:hover {
+            transform: scale(1.1);
+            border-color: #ff6b9d;
+        }
+
+        /* 内容区域 */
+        .content-area {
+            display: grid;
+            grid-template-columns: 200px 1fr 250px;
+            gap: 20px;
+        }
+
+        /* 好友列表 */
+        .friends-list {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(255, 182, 193, 0.2);
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .friends-list::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .friends-list::-webkit-scrollbar-track {
+            background: #ffe0f0;
+            border-radius: 3px;
+        }
+
+        .friends-list::-webkit-scrollbar-thumb {
+            background: #ff8fab;
+            border-radius: 3px;
+        }
+
+        .friends-title {
+            color: #ff6b9d;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .friend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border-radius: 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .friend-item:hover {
+            background: #fff5f8;
+            transform: translateX(5px);
+        }
+
+        .friend-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #ffd6e7;
+        }
+
+        .friend-info {
+            flex: 1;
+        }
+
+        .friend-name {
+            color: #ff6b9d;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .friend-status {
+            color: #ff8fab;
+            font-size: 11px;
+            margin-top: 2px;
+        }
+
+        .online-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #4caf50;
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+        }
+
+        /* 主内容区 */
+        .main-content {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(255, 182, 193, 0.2);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* 养成系统 */
+        .pet-container {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .pet-display {
+            position: relative;
+            margin: 20px auto;
+            width: 160px;
+            height: 160px;
+        }
+
+        .pet-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #ffd6e7;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 182, 193, 0.2);
+        }
+
+        .pet-image:hover {
+            transform: scale(1.05);
+            border-color: #ff6b9d;
+        }
+
+        .pet-mood {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .pet-status {
+            background: linear-gradient(135deg, #fff5f8, #ffeef8);
+            border-radius: 15px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .status-bar {
+            margin: 10px 0;
+        }
+
+        .status-label {
+            color: #ff6b9d;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .progress-bar {
+            background: #ffe0f0;
+            border-radius: 10px;
+            height: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(135deg, #ff6b9d, #ff8fab);
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .pet-actions {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .action-btn {
+            background: linear-gradient(135deg, #ffd6e7, #ffe0f0);
+            border: none;
+            padding: 12px;
+            border-radius: 15px;
+            color: #ff6b9d;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .action-btn:hover {
+            transform: scale(1.05);
+            background: linear-gradient(135deg, #ff8fab, #ff6b9d);
+            color: white;
+            box-shadow: 0 3px 10px rgba(255, 107, 157, 0.2);
+        }
+
+        /* 烹饪小屋 */
+        .cooking-area {
+            padding: 20px;
+        }
+
+        .cooking-title {
+            color: #ff6b9d;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .cooking-gallery {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .cooking-item {
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 4px 15px rgba(255, 182, 193, 0.15);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .cooking-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(255, 182, 193, 0.2);
+        }
+
+        .cooking-image {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
+
+        .cooking-name {
+            color: #ff6b9d;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .cooking-desc {
+            color: #ff8fab;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        /* 野餐时光 */
+        .picnic-area {
+            padding: 20px;
+        }
+
+        .picnic-title {
+            color: #ff6b9d;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .picnic-gallery {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .picnic-item {
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 4px 15px rgba(255, 182, 193, 0.15);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .picnic-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(255, 182, 193, 0.2);
+        }
+
+        .picnic-image {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
+
+        .picnic-character {
+            color: #ff6b9d;
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .picnic-desc {
+            color: #ff8fab;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        /* 雪人时光 */
+        .snowman-area {
+            padding: 20px;
+        }
+
+        .snowman-title {
+            color: #ff6b9d;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .snowman-gallery {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .snowman-item {
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 4px 15px rgba(255, 182, 193, 0.15);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .snowman-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(255, 182, 193, 0.2);
+        }
+
+        .snowman-image {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
+
+        .snowman-character {
+            color: #ff6b9d;
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .snowman-desc {
+            color: #ff8fab;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        /* 西游时光 */
+        .journey-area {
+            padding: 20px;
+        }
+
+        .journey-title {
+            color: #ff6b9d;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .journey-showcase {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .journey-card {
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 4px 15px rgba(255, 182, 193, 0.15);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .journey-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(255, 182, 193, 0.2);
+        }
+
+        .journey-image {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
+
+        .journey-name {
+            color: #ff6b9d;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .journey-desc {
+            color: #ff8fab;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        /* 治愈模式 */
+        .healing-container {
+            padding: 20px;
+        }
+
+        .healing-title {
+            color: #ff6b9d;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .healing-cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .healing-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(255, 182, 193, 0.15);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .healing-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(255, 182, 193, 0.2);
+        }
+
+        .healing-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        .healing-name {
+            color: #ff6b9d;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .healing-desc {
+            color: #ff8fab;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        /* 深呼吸练习 */
+        .breathing-exercise {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            margin: 20px 0;
+            box-shadow: 0 4px 15px rgba(255, 182, 193, 0.15);
+        }
+
+        .breathing-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff6b9d, #ff8fab);
+            margin: 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 4s ease;
+            box-shadow: 0 5px 15px rgba(255, 107, 157, 0.2);
+        }
+
+        .breathing-circle.inhale {
+            transform: scale(1.3);
+        }
+
+        .breathing-circle.exhale {
+            transform: scale(0.7);
+        }
+
+        .breathing-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+
+        /* 正念冥想 */
+        .meditation-area {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            margin: 20px 0;
+            box-shadow: 0 4px 15px rgba(255, 182, 193, 0.15);
+        }
+
+        .meditation-timer {
+            font-size: 36px;
+            color: #ff6b9d;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+
+        .meditation-text {
+            color: #ff8fab;
+            font-size: 14px;
+            line-height: 1.5;
+            margin: 10px 0;
+            font-style: italic;
+            min-height: 40px;
+        }
+
+        /* 情绪日记 */
+        .emotion-diary {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 4px 15px rgba(255, 182, 193, 0.15);
+        }
+
+        .emotion-selector {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .emotion-btn {
+            font-size: 30px;
+            background: #fff5f8;
+            border: 2px solid transparent;
+            border-radius: 12px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .emotion-btn:hover {
+            transform: scale(1.1);
+            border-color: #ff6b9d;
+        }
+
+        .emotion-btn.selected {
+            background: linear-gradient(135deg, #ff6b9d, #ff8fab);
+            border-color: #ff6b9d;
+            transform: scale(1.1);
+        }
+
+        .diary-input {
+            width: 100%;
+            min-height: 100px;
+            padding: 12px;
+            border: 2px solid #ffd6e7;
+            border-radius: 12px;
+            font-size: 14px;
+            resize: vertical;
+            background: #fafafa;
+            transition: all 0.3s ease;
+        }
+
+        .diary-input:focus {
+            outline: none;
+            border-color: #ff6b9d;
+            background: white;
+        }
+
+        /* 每日正能量 */
+        .daily-positive {
+            background: linear-gradient(135deg, #fff5f8, #ffeef8);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            margin: 20px 0;
+            box-shadow: 0 4px 15px rgba(255, 182, 193, 0.15);
+        }
+
+        .positive-quote {
+            font-size: 18px;
+            color: #ff6b9d;
+            font-weight: bold;
+            line-height: 1.5;
+            margin: 15px 0;
+        }
+
+        /* 朋友圈 */
+        .moments-area {
+            padding: 20px;
+        }
+
+        .moments-title {
+            color: #ff6b9d;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .moments-feed {
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+
+        .moments-feed::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .moments-feed::-webkit-scrollbar-track {
+            background: #ffe0f0;
+            border-radius: 3px;
+        }
+
+        .moments-feed::-webkit-scrollbar-thumb {
+            background: #ff8fab;
+            border-radius: 3px;
+        }
+
+        .moment-post {
+            background: #fff5f8;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .moment-post:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 182, 193, 0.2);
+        }
+
+        .moment-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .moment-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #ffd6e7;
+        }
+
+        .moment-info {
+            flex: 1;
+        }
+
+        .moment-author {
+            color: #ff6b9d;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .moment-time {
+            color: #ff8fab;
+            font-size: 12px;
+            margin-top: 2px;
+        }
+
+        .moment-content {
+            color: #666;
+            margin-bottom: 12px;
+            line-height: 1.5;
+            font-size: 14px;
+        }
+
+        .moment-images {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .moment-image {
+            width: 100%;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+
+        .moment-actions {
+            display: flex;
+            gap: 15px;
+            padding-top: 10px;
+            border-top: 1px solid #ffe0f0;
+        }
+
+        .moment-action {
+            color: #ff8fab;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s ease;
+        }
+
+        .moment-action:hover {
+            color: #ff6b9d;
+        }
+
+        .moment-likes {
+            color: #ff8fab;
+            font-size: 12px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        .moment-likes:hover {
+            color: #ff6b9d;
+        }
+
+        /* 留言板 */
+        .message-board {
+            padding: 20px;
+        }
+
+        .message-title {
+            color: #ff6b9d;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .message-input-area {
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(255, 182, 193, 0.15);
+        }
+
+        .message-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ffd6e7;
+            border-radius: 12px;
+            font-size: 14px;
+            resize: vertical;
+            min-height: 80px;
+            background: #fafafa;
+            transition: all 0.3s ease;
+        }
+
+        .message-input:focus {
+            outline: none;
+            border-color: #ff6b9d;
+            background: white;
+        }
+
+        .message-submit {
+            background: linear-gradient(135deg, #ff6b9d, #ff8fab);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 15px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .message-submit:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(255, 107, 157, 0.2);
+        }
+
+        .messages-list {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+
+        .messages-list::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .messages-list::-webkit-scrollbar-track {
+            background: #ffe0f0;
+            border-radius: 3px;
+        }
+
+        .messages-list::-webkit-scrollbar-thumb {
+            background: #ff8fab;
+            border-radius: 3px;
+        }
+
+        .message-item {
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 12px;
+            box-shadow: 0 3px 10px rgba(255, 182, 193, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .message-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 182, 193, 0.15);
+        }
+
+        .message-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .message-author {
+            color: #ff6b9d;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .message-time {
+            color: #ff8fab;
+            font-size: 12px;
+            margin-left: auto;
+        }
+
+        .message-content {
+            color: #666;
+            line-height: 1.5;
+            font-size: 14px;
+        }
+
+        .message-likes {
+            color: #ff8fab;
+            font-size: 12px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        .message-likes:hover {
+            color: #ff6b9d;
+        }
+
+        /* 聊天框 */
+        .chat-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(255, 182, 193, 0.2);
+            display: flex;
+            flex-direction: column;
+            height: 500px;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #ff6b9d, #ff8fab);
+            color: white;
+            padding: 15px;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chat-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid white;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background: #fafafa;
+        }
+
+        .chat-messages::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: #ffe0f0;
+            border-radius: 3px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: #ff8fab;
+            border-radius: 3px;
+        }
+
+        .chat-message {
+            margin-bottom: 12px;
+            display: flex;
+            gap: 8px;
+            animation: messageSlideIn 0.3s ease-out;
+        }
+
+        @keyframes messageSlideIn {
+            from { 
+                opacity: 0; 
+                transform: translateY(5px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+        }
+
+        .chat-message.sent {
+            flex-direction: row-reverse;
+        }
+
+        .chat-bubble {
+            max-width: 70%;
+            padding: 8px 12px;
+            border-radius: 12px;
+            font-size: 13px;
+        }
+
+        .chat-message.received .chat-bubble {
+            background: white;
+            color: #666;
+            box-shadow: 0 2px 5px rgba(255, 182, 193, 0.1);
+        }
+
+        .chat-message.sent .chat-bubble {
+            background: linear-gradient(135deg, #ff6b9d, #ff8fab);
+            color: white;
+        }
+
+        .chat-input-area {
+            padding: 15px;
+            border-top: 1px solid #ffe0f0;
+            display: flex;
+            gap: 8px;
+            background: white;
+            border-radius: 0 0 20px 20px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 2px solid #ffd6e7;
+            border-radius: 15px;
+            font-size: 13px;
+            transition: all 0.3s ease;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: #ff6b9d;
+            box-shadow: 0 2px 5px rgba(255, 107, 157, 0.1);
+        }
+
+        .chat-send {
+            background: linear-gradient(135deg, #ff6b9d, #ff8fab);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .chat-send:hover {
+            transform: scale(1.05);
+            box-shadow: 0 3px 8px rgba(255, 107, 157, 0.2);
+        }
+
+        /* 音乐播放器 */
+        .music-player {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 3px 10px rgba(255, 182, 193, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .music-player:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(255, 107, 157, 0.3);
+        }
+
+        .music-icon {
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .music-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .music-info {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .music-title {
+            font-size: 12px;
+            color: #ff6b9d;
+            font-weight: bold;
+        }
+
+        .music-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .music-control {
+            background: #fff5f8;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 12px;
+            color: #ff6b9d;
+        }
+
+        .music-control:hover {
+            background: #ffe0f0;
+            transform: scale(1.05);
+        }
+
+        .music-control.active {
+            background: linear-gradient(135deg, #ff6b9d, #ff8fab);
+            color: white;
+        }
+
+        .music-progress {
+            width: 100px;
+            height: 4px;
+            background: #ffe0f0;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+
+        .music-progress-bar {
+            height: 100%;
+            background: linear-gradient(135deg, #ff6b9d, #ff8fab);
+            border-radius: 2px;
+            transition: width 0.1s linear;
+        }
+
+        /* 消息提示 */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: white;
+            padding: 12px 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(255, 182, 193, 0.2);
+            display: none;
+            align-items: center;
+            gap: 8px;
+            z-index: 2000;
+            animation: toastSlideIn 0.3s ease-out;
+        }
+
+        @keyframes toastSlideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .toast.show {
+            display: flex;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 1200px) {
+            .content-area {
+                grid-template-columns: 1fr;
+            }
+            
+            .friends-list {
+                display: none;
+            }
+            
+            .chat-container {
+                height: 400px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-tabs {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .pet-actions {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .healing-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .cooking-gallery {
+                grid-template-columns: 1fr;
+            }
+            
+            .picnic-gallery {
+                grid-template-columns: 1fr;
+            }
+            
+            .snowman-gallery {
+                grid-template-columns: 1fr;
+            }
+            
+            .journey-showcase {
+                grid-template-columns: 1fr;
+            }
+            
+            .avatar-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 漂浮特效背景 -->
+    <div class="bg-decoration" id="bgDecoration">
+        <!-- 动态生成的漂浮元素 -->
+    </div>
+
+    <!-- 背景音乐播放器 -->
+    <audio id="bgMusic" loop>
+        <source src="https://sfile.chatglm.cn/chatglm4/file/3e/3e0b0d98d3.m4a" type="audio/mpeg">
+        您的浏览器不支持音频播放。
+    </audio>
+
+    <!-- 音乐播放器 -->
+    <div class="music-player" id="musicPlayer">
+        <div class="music-icon" onclick="toggleMusic()">🎵</div>
+        <div class="music-info">
+            <div class="music-title">吉伊卡哇 - 治愈音乐</div>
+            <div class="music-controls">
+                <button class="music-control" id="playPauseBtn" onclick="togglePlayPause()">▶</button>
+                <button class="music-control" onclick="toggleMusic()">⏹</button>
+            </div>
+        </div>
+        <div class="music-progress">
+            <div class="music-progress-bar" id="musicProgressBar"></div>
+        </div>
+    </div>
+
+    <!-- 登录界面 -->
+    <div class="login-container" id="loginContainer">
+        <div class="login-box">
+            <div class="login-characters">
+                <img src="https://sfile.chatglm.cn/chatglm4/8f2cd7d6-8b77-43c9-b899-1027a95cd382.jpg" class="login-character" alt="吉伊" onclick="selectLoginCharacter('吉伊', this)">
+                <img src="https://sfile.chatglm.cn/chatglm4/50f6e5d6-7f15-464b-864a-784f2db5c622.jpg" class="login-character" alt="乌萨奇" onclick="selectLoginCharacter('乌萨奇', this)">
+                <img src="https://sfile.chatglm.cn/chatglm4/4f80e676-4730-4e96-9a16-5c53d2d59baa.jpg" class="login-character" alt="小八" onclick="selectLoginCharacter('小八', this)">
+                <img src="https://sfile.chatglm.cn/chatglm4/9c881aa9-6ceb-47f4-af57-ff10856fdb2f.jpg" class="login-character" alt="飞鼠" onclick="selectLoginCharacter('飞鼠', this)">
+            </div>
+            <h1 class="login-title">🌸 吉伊卡哇 🌸</h1>
+            <p class="login-subtitle">选择你的萌萌宝贝，开始治愈之旅～</p>
+            <input type="text" class="login-input" id="username" placeholder="请输入你的萌萌昵称～" maxlength="20">
+            <input type="password" class="login-input" id="password" placeholder="输入小秘密密码～" maxlength="20">
+            
+            <!-- 头像选择区域 -->
+            <div class="avatar-selection">
+                <h3 class="avatar-title">🎨 选择你的头像</h3>
+                <div class="avatar-grid">
+                    <img src="https://sfile.chatglm.cn/chatglm4/8f2cd7d6-8b77-43c9-b899-1027a95cd382.jpg" class="avatar-option selected" onclick="selectAvatar(this, 'https://sfile.chatglm.cn/chatglm4/8f2cd7d6-8b77-43c9-b899-1027a95cd382.jpg')" alt="吉伊">
+                    <img src="https://sfile.chatglm.cn/chatglm4/df637e16-6037-4b8a-b107-ac4732f8c6fc.jpg" class="avatar-option" onclick="selectAvatar(this, 'https://sfile.chatglm.cn/chatglm4/df637e16-6037-4b8a-b107-ac4732f8c6fc.jpg')" alt="吉伊1">
+                    <img src="https://sfile.chatglm.cn/chatglm4/50f6e5d6-7f15-464b-864a-784f2db5c622.jpg" class="avatar-option" onclick="selectAvatar(this, 'https://sfile.chatglm.cn/chatglm4/50f6e5d6-7f15-464b-864a-784f2db5c622.jpg')" alt="乌萨奇">
+                    <img src="https://sfile.chatglm.cn/chatglm4/911c251c-ecb7-4c7c-a122-b04d22f59aae.jpg" class="avatar-option" onclick="selectAvatar(this, 'https://sfile.chatglm.cn/chatglm4/911c251c-ecb7-4c7c-a122-b04d22f59aae.jpg')" alt="乌萨奇5">
+                    <img src="https://sfile.chatglm.cn/chatglm4/4f80e676-4730-4e96-9a16-5c53d2d59baa.jpg" class="avatar-option" onclick="selectAvatar(this, 'https://sfile.chatglm.cn/chatglm4/4f80e676-4730-4e96-9a16-5c53d2d59baa.jpg')" alt="小八">
+                    <img src="https://sfile.chatglm.cn/chatglm4/9703cc8e-4152-409d-b889-45da299d4a7e.jpg" class="avatar-option" onclick="selectAvatar(this, 'https://sfile.chatglm.cn/chatglm4/9703cc8e-4152-409d-b889-45da299d4a7e.jpg')" alt="小八8">
+                    <img src="https://sfile.chatglm.cn/chatglm4/9c881aa9-6ceb-47f4-af57-ff10856fdb2f.jpg" class="avatar-option" onclick="selectAvatar(this, 'https://sfile.chatglm.cn/chatglm4/9c881aa9-6ceb-47f4-af57-ff10856fdb2f.jpg')" alt="飞鼠5">
+                </div>
+            </div>
+            
+            <button class="login-btn" onclick="login()">开启治愈之旅 ✨</button>
+        </div>
+    </div>
+
+    <!-- 主界面 -->
+    <div class="main-container" id="mainContainer">
+        <!-- 顶部导航 -->
+        <header class="header">
+            <div class="logo">
+                <span>🌸</span>
+                <span>吉伊卡哇</span>
+            </div>
+            <div class="nav-tabs">
+                <button class="nav-tab active" onclick="switchTab('pet')">萌宠养成</button>
+                <button class="nav-tab" onclick="switchTab('cooking')">烹饪小屋</button>
+                <button class="nav-tab" onclick="switchTab('picnic')">野餐时光</button>
+                <button class="nav-tab" onclick="switchTab('snowman')">雪人时光</button>
+                <button class="nav-tab" onclick="switchTab('journey')">西游时光</button>
+                <button class="nav-tab" onclick="switchTab('healing')">治愈模式</button>
+                <button class="nav-tab" onclick="switchTab('moments')">朋友圈</button>
+                <button class="nav-tab" onclick="switchTab('message')">留言板</button>
+            </div>
+            <div class="user-info">
+                <span id="welcomeText">欢迎回来，麻麻！</span>
+                <img id="userAvatar" class="user-avatar" src="https://sfile.chatglm.cn/chatglm4/8f2cd7d6-8b77-43c9-b899-1027a95cd382.jpg" alt="用户头像" onclick="changeUserAvatar()">
+            </div>
+        </header>
+
+        <!-- 内容区域 -->
+        <div class="content-area">
+            <!-- 好友列表 -->
+            <aside class="friends-list">
+                <h3 class="friends-title">🌸 我的好友 🌸</h3>
+                <div id="friendsList">
+                    <div class="friend-item" onclick="startChat('吉伊')">
+                        <img src="https://sfile.chatglm.cn/chatglm4/8f2cd7d6-8b77-43c9-b899-1027a95cd382.jpg" class="friend-avatar" alt="吉伊">
+                        <div class="friend-info">
+                            <div class="friend-name">吉伊</div>
+                            <div class="friend-status">在线 - 麻麻，今天也要加油哦！</div>
+                        </div>
+                        <div class="online-indicator"></div>
+                    </div>
+                    <div class="friend-item" onclick="startChat('乌萨奇')">
+                        <img src="https://sfile.chatglm.cn/chatglm4/50f6e5d6-7f15-464b-864a-784f2db5c622.jpg" class="friend-avatar" alt="乌萨奇">
+                        <div class="friend-info">
+                            <div class="friend-name">乌萨奇</div>
+                            <div class="friend-status">在线 - 麻麻，想和你聊天～</div>
+                        </div>
+                        <div class="online-indicator"></div>
+                    </div>
+                    <div class="friend-item" onclick="startChat('小八')">
+                        <img src="https://sfile.chatglm.cn/chatglm4/4f80e676-4730-4e96-9a16-5c53d2d59baa.jpg" class="friend-avatar" alt="小八">
+                        <div class="friend-info">
+                            <div class="friend-name">小八</div>
+                            <div class="friend-status">忙碌 - 等下聊哦，麻麻～</div>
+                        </div>
+                        <div class="online-indicator"></div>
+                    </div>
+                    <div class="friend-item" onclick="startChat('飞鼠')">
+                        <img src="https://sfile.chatglm.cn/chatglm4/9c881aa9-6ceb-47f4-af57-ff10856fdb2f.jpg" class="friend-avatar" alt="飞鼠">
+                        <div class="friend-info">
+                            <div class="friend-name">飞鼠</div>
+                            <div class="friend-status">在线 - 麻麻，一起玩吧！</div>
+                        </div>
+                        <div class="online-indicator"></div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- 主内容区 -->
+            <main class="main-content">
+                <!-- 萌宠养成 -->
+                <div class="tab-content active" id="petTab">
+                    <div class="pet-container">
+                        <h2 style="color: #ff6b9d; margin-bottom: 20px;">🌸 我的萌宠宝贝 🌸</h2>
+                        <div class="pet-display">
+                            <img id="petImage" class="pet-image" src="https://sfile.chatglm.cn/chatglm4/8f2cd7d6-8b77-43c9-b899-1027a95cd382.jpg" alt="吉伊" onclick="petInteraction()">
+                            <div class="pet-mood" id="petMood" onclick="changePetMood()">😊</div>
+                        </div>
+                        <div class="pet-status">
+                            <div class="status-bar">
+                                <div class="status-label">❤️ 健康值</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="healthBar" style="width: 85%;">85%</div>
+                                </div>
+                            </div>
+                            <div class="status-bar">
+                                <div class="status-label">😊 快乐值</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="happinessBar" style="width: 75%;">75%</div>
+                                </div>
+                            </div>
+                            <div class="status-bar">
+                                <div class="status-label">⭐ 亲密度</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="expBar" style="width: 60%;">60%</div>
+                                </div>
+                            </div>
+                            <div class="status-bar">
+                                <div class="status-label">🍖 饱食度</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="hungerBar" style="width: 70%;">70%</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pet-actions">
+                            <button class="action-btn" onclick="feedPet()">🍖 喂食</button>
+                            <button class="action-btn" onclick="playWithPet()">🎾 玩耍</button>
+                            <button class="action-btn" onclick="petPet()">🤗 抚摸</button>
+                            <button class="action-btn" onclick="healPet()">💊 治疗</button>
+                            <button class="action-btn" onclick="singSong()">🎵 唱歌</button>
+                            <button class="action-btn" onclick="tellStory()">📖 讲故事</button>
+                            <button class="action-btn" onclick="giveGift()">🎁 送礼物</button>
+                            <button class="action-btn" onclick="takePhoto()">📸 拍照</button>
+                            <button class="action-btn" onclick="changePet()">🔄 换宝贝</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 烹饪小屋 -->
+                <div class="tab-content" id="cookingTab">
+                    <div class="cooking-area">
+                        <h2 class="cooking-title">🍳 烹饪小屋 🍳</h2>
+                        <div class="cooking-gallery">
+                            <div class="cooking-item" onclick="viewCooking('吉伊做饭6')">
+                                <img src="https://sfile.chatglm.cn/chatglm4/3da8c235-0abc-4aaf-a0e3-abad72e5978a.jpg" class="cooking-image" alt="吉伊6做饭">
+                                <div class="cooking-name">🐭 吉伊的料理</div>
+                                <p class="cooking-desc">麻麻，今天我做了美味的料理！虽然有点手忙脚乱，但是看到大家吃得开心的样子，就觉得一切都值得了～</p>
+                            </div>
+                            <div class="cooking-item" onclick="viewCooking('飞鼠6做饭')">
+                                <img src="https://sfile.chatglm.cn/chatglm4/7d50dae8-50e3-464d-9fce-9c548a7eddc7.jpg" class="cooking-image" alt="飞鼠6做饭">
+                                <div class="cooking-name">🦔 飞鼠的料理</div>
+                                <p class="cooking-desc">麻麻，我的厨艺也很棒呢！今天做了特别的料理，希望麻麻会喜欢～</p>
+                            </div>
+                            <div class="cooking-item" onclick="viewCooking('乌萨奇5做饭')">
+                                <img src="https://sfile.chatglm.cn/chatglm4/b21cdf3f-2055-49ef-8871-ef202409eac5.jpg" class="cooking-image" alt="乌萨奇5做饭">
+                                <div class="cooking-name">🐰 乌萨奇的料理</div>
+                                <p class="cooking-desc">麻麻，我也在学做饭呢！虽然有点手忙脚乱，但是做出来的料理看起来很美味呢～</p>
+                            </div>
+                            <div class="cooking-item" onclick="viewCooking('小八7做饭')">
+                                <img src="https://sfile.chatglm.cn/chatglm4/028caeeb-11a0-419b-932d-6fade50b99d4.jpg" class="cooking-image" alt="小八7做饭">
+                                <div class="cooking-name">🐱 小八的料理</div>
+                                <p class="cooking-desc">麻麻，今天我做了特别的料理！虽然有点手忙脚乱，但是做出来的料理看起来很美味呢～</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 野餐时光 -->
+                <div class="tab-content" id="picnicTab">
+                    <div class="picnic-area">
+                        <h2 class="picnic-title">🧺 野餐时光 🧺</h2>
+                        <div class="picnic-gallery">
+                            <div class="picnic-item" onclick="viewPicnic('吉伊野餐')">
+                                <img src="https://sfile.chatglm.cn/chatglm4/4a013036-6f7e-49f8-bb81-000256200549.jpg" class="picnic-image" alt="野餐吉伊">
+                                <div class="picnic-character">🐭 吉伊的野餐</div>
+                                <div class="picnic-desc">麻麻，今天天气超好！和朋友们一起野餐，阳光暖暖的，草地软软的，还有美味的食物～</div>
+                            </div>
+                            <div class="picnic-item" onclick="viewPicnic('乌萨奇野餐')">
+                                <img src="https://sfile.chatglm.cn/chatglm4/3152e7e2-b905-4b40-90f8-4aef7b49dd83.jpg" class="picnic-image" alt="野餐乌萨奇">
+                                <div class="picnic-character">🐰 乌萨奇的野餐</div>
+                                <div class="picnic-desc">麻麻，在花丛中野餐，感觉像童话一样！蝴蝶都在身边飞舞，花儿散发着淡淡的香味～</div>
+                            </div>
+                            <div class="picnic-item" onclick="viewPicnic('小八野餐')">
+                                <img src="https://sfile.chatglm.cn/chatglm4/4d4e2eda-fad4-4a2b-9aae-a3f75207cb00.jpg" class="picnic-image" alt="野餐小八">
+                                <div class="picnic-character">🐱 小八的野餐</div>
+                                <div class="picnic-desc">麻麻，找到了一个超棒的野餐地点！有树荫可以遮阳，有微风可以吹拂，最重要的是有最好的朋友们在身边～</div>
+                            </div>
+                            <div class="picnic-item" onclick="viewPicnic('飞鼠野餐')">
+                                <img src="https://sfile.chatglm.cn/chatglm4/7bc72745-7e66-462e-aa2f-17549ddf0ba1.jpg" class="picnic-image" alt="野餐飞鼠">
+                                <div class="picnic-character">🦔 飞鼠的野餐</div>
+                                <div class="picnic-desc">麻麻，在阳光下野餐，感觉像童话一样！蝴蝶都在身边飞舞，花儿散发着淡淡的香味～</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 雪人时光 -->
+                <div class="tab-content" id="snowmanTab">
+                    <div class="snowman-area">
+                        <h2 class="snowman-title">⛄ 雪人时光 ⛄</h2>
+                        <div class="snowman-gallery">
+                            <div class="snowman-item" onclick="viewSnowman('吉伊雪人')">
+                                <img src="https://sfile.chatglm.cn/chatglm4/b7e03e5c-b862-4b08-9098-c95cfc4e622f.jpg" class="snowman-image" alt="吉伊雪人">
+                                <div class="snowman-character">🐭 吉伊的雪人</div>
+                                <div class="snowman-desc">麻麻，堆了一个可爱的雪人！像不像我呀？今天和朋友们一起在雪地里玩耍，真的好开心！</div>
+                            </div>
+                            <div class="snowman-item" onclick="viewSnowman('乌萨奇雪人')">
+                                <img src="https://sfile.chatglm.cn/chatglm4/58acb581-55b8-4862-b012-c07526592db4.jpg" class="snowman-image" alt="乌萨奇雪人">
+                                <div class="snowman-character">🐰 乌萨奇的雪人</div>
+                                <div class="snowman-desc">麻麻，我的雪人有长长的耳朵！你喜欢吗？我们一起玩雪吧～</div>
+                            </div>
+                            <div class="snowman-item" onclick="viewSnowman('小八雪人')">
+                                <img src="https://sfile.chatglm.cn/chatglm4/a839326c-47e4-445e-806a-25232adfc737.jpg" class="snowman-image" alt="小八雪人">
+                                <div class="snowman-character">🐱 小八的雪人</div>
+                                <div class="snowman-desc">麻麻，雪人也有胡须！我们一起来玩雪吧～记得要穿暖和哦！</div>
+                            </div>
+                            <div class="snowman-item" onclick="viewSnowman('飞鼠雪人')">
+                                <img src="https://sfile.chatglm.cn/chatglm4/bb71312a-95eb-4525-a968-fa531f8f9677.jpg" class="snowman-image" alt="飞鼠雪人">
+                                <div class="snowman-character">🦔 飞鼠的雪人</div>
+                                <div class="snowman-desc">麻麻，小雪人也有小刺！麻麻，好可爱对不对？</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 西游时光 -->
+                <div class="tab-content" id="journeyTab">
+                    <div class="journey-area">
+                        <h2 class="journey-title">🎭 西游时光 🎭</h2>
+                        <div class="journey-showcase">
+                            <div class="journey-card" onclick="viewJourney('吉伊唐僧')">
+                                <img src="https://sfile.chatglm.cn/chatglm4/27c98b8e-7906-46a0-84c8-cee3b5830813.jpg" class="journey-image" alt="吉伊唐僧">
+                                <div class="journey-name">吉伊的唐僧之旅</div>
+                                <p class="journey-desc">麻麻，我是不是很像唐僧呀？要去西天取经咯！虽然路途遥远，但是有朋友们的陪伴，什么都不怕！</p>
+                            </div>
+                            <div class="journey-card" onclick="viewJourney('乌萨奇悟空')">
+                                <img src="https://sfile.chatglm.cn/chatglm4/8439063b-da4f-4b2c-ade7-379b10b6878b.jpg" class="journey-image" alt="乌萨奇孙悟空">
+                                <div class="journey-name">乌萨奇的七十二变</div>
+                                <p class="journey-desc">看我七十二变！麻麻，你想变成什么呢？今天打败了好多妖怪，保护了师父和师弟们！</p>
+                            </div>
+                            <div class="journey-card" onclick="viewJourney('飞鼠红孩儿')">
+                                <img src="https://sfile.chatglm.cn/chatglm4/98a97c66-8f0d-479d-b6a5-ce000d1f7f5e.jpg" class="journey-image" alt="飞鼠红孩儿">
+                                <div class="journey-name">飞鼠的火焰山</div>
+                                <p class="journey-desc">我是红孩儿！麻麻，我的三昧真火很厉害吧？今天在火焰山练习法术，感觉自己的功力又增强了！</p>
+                            </div>
+                            <div class="journey-card" onclick="viewJourney('小八猪八戒')">
+                                <img src="https://sfile.chatglm.cn/chatglm4/d64dc542-98bd-498b-815d-53bb638ce2dc.jpg" class="journey-image" alt="小八猪八戒">
+                                <div class="journey-name">小八的高老庄</div>
+                                <p class="journey-desc">我是猪八戒！麻麻，高老庄的饭真好吃～虽然师父说我有点贪吃，但是我觉得吃饱了才有力气保护大家！</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 治愈模式 -->
+                <div class="tab-content" id="healingTab">
+                    <div class="healing-container">
+                        <h2 class="healing-title">🌸 治愈心灵空间 🌸</h2>
+                        
+                        <div class="healing-cards">
+                            <div class="healing-card" onclick="startBreathing()">
+                                <div class="healing-icon">🌬️</div>
+                                <div class="healing-name">深呼吸练习</div>
+                                <p class="healing-desc">通过深呼吸放松身心，缓解压力和焦虑</p>
+                            </div>
+                            <div class="healing-card" onclick="startMeditation()">
+                                <div class="healing-icon">🧘</div>
+                                <div class="healing-name">正念冥想</div>
+                                <p class="healing-desc">静心冥想，找回内心的平静与安宁</p>
+                            </div>
+                            <div class="healing-card" onclick="openEmotionDiary()">
+                                <div class="healing-icon">📔</div>
+                                <div class="healing-name">情绪日记</div>
+                                <p class="healing-desc">记录情绪变化，了解真实的自己</p>
+                            </div>
+                        </div>
+
+                        <!-- 深呼吸练习 -->
+                        <div class="breathing-exercise" id="breathingExercise" style="display: none;">
+                            <h3 style="color: #ff6b9d; margin-bottom: 15px;">🌬️ 深呼吸练习</h3>
+                            <div class="breathing-circle" id="breathingCircle">准备开始</div>
+                            <p style="color: #ff8fab; margin: 10px 0;">跟随圆圈的节奏进行深呼吸</p>
+                            <div class="breathing-controls">
+                                <button class="action-btn" onclick="startBreathingExercise()">开始练习</button>
+                                <button class="action-btn" onclick="stopBreathingExercise()">停止</button>
+                            </div>
+                        </div>
+
+                        <!-- 正念冥想 -->
+                        <div class="meditation-area" id="meditationArea" style="display: none;">
+                            <h3 style="color: #ff6b9d; margin-bottom: 15px;">🧘 正念冥想</h3>
+                            <div class="meditation-timer" id="meditationTimer">05:00</div>
+                            <div class="meditation-text" id="meditationText">
+                                闭上眼睛，深呼吸...感受当下的宁静...
+                            </div>
+                            <div class="breathing-controls">
+                                <button class="action-btn" onclick="startMeditationTimer()">开始冥想</button>
+                                <button class="action-btn" onclick="stopMeditationTimer()">结束</button>
+                            </div>
+                        </div>
+
+                        <!-- 情绪日记 -->
+                        <div class="emotion-diary" id="emotionDiary" style="display: none;">
+                            <h3 style="color: #ff6b9d; margin-bottom: 15px;">📔 情绪日记</h3>
+                            <p style="color: #ff8fab; margin-bottom: 15px;">今天的心情如何？选择一个表情记录下来吧～</p>
+                            <div class="emotion-selector">
+                                <button class="emotion-btn" onclick="selectEmotion(this, '😊')">😊</button>
+                                <button class="emotion-btn" onclick="selectEmotion(this, '😢')">😢</button>
+                                <button class="emotion-btn" onclick="selectEmotion(this, '😡')">😡</button>
+                                <button class="emotion-btn" onclick="selectEmotion(this, '😰')">😰</button>
+                                <button class="emotion-btn" onclick="selectEmotion(this, '😴')">😴</button>
+                                <button class="emotion-btn" onclick="selectEmotion(this, '🤗')">🤗</button>
+                            </div>
+                            <textarea class="diary-input" id="diaryInput" placeholder="写下你的感受和想法..."></textarea>
+                            <div style="text-align: center; margin-top: 15px;">
+                                <button class="action-btn" onclick="saveDiary()">保存日记 💕</button>
+                            </div>
+                        </div>
+
+                        <!-- 每日正能量 -->
+                        <div class="daily-positive">
+                            <h3 style="color: #ff6b9d; margin-bottom: 15px;">✨ 每日正能量 ✨</h3>
+                            <div class="positive-quote" id="positiveQuote">
+                                生活就像彩虹，需要雨水才能绽放美丽。相信每一个困难都是成长的机会。
+                            </div>
+                            <div class="positive-author">— 吉伊卡哇</div>
+                            <button class="action-btn" onclick="getNewQuote()" style="margin-top: 15px;">换一句 💫</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 朋友圈 -->
+                <div class="tab-content" id="momentsTab">
+                    <div class="moments-area">
+                        <h2 class="moments-title">🌸 朋友圈 🌸</h2>
+                        <div class="moments-feed" id="momentsFeed">
+                            <div class="moment-post">
+                                <div class="moment-header">
+                                    <img src="https://sfile.chatglm.cn/chatglm4/3da8c235-0abc-4aaf-a0e3-abad72e5978a.jpg" class="moment-avatar" alt="吉伊">
+                                    <div class="moment-info">
+                                        <div class="moment-author">吉伊</div>
+                                        <div class="moment-time">刚刚</div>
+                                    </div>
+                                </div>
+                                <div class="moment-content">
+                                    麻麻，今天我在厨房做了美味的料理！虽然有点手忙脚乱，但是看到大家吃得开心的样子，就觉得一切都值得了～❤️ 做饭真的是一件很幸福的事情呢！
+                                </div>
+                                <div class="moment-images">
+                                    <img src="https://sfile.chatglm.cn/chatglm4/3da8c235-0abc-4aaf-a0e3-abad72e5978a.jpg" class="moment-image" alt="吉伊6做饭">
+                                </div>
+                                <div class="moment-actions">
+                                    <span class="moment-action" onclick="likeMoment(this)">👍 点赞</span>
+                                    <span class="moment-action" onclick="commentMoment()">💬 评论</span>
+                                    <span class="moment-action" onclick="shareMoment()">🔄 分享</span>
+                                </div>
+                                <div class="moment-likes" onclick="likeMoment(this)">
+                                    ❤️ 乌萨奇、小八、飞鼠 等30人觉得很赞
+                                </div>
+                            </div>
+
+                            <div class="moment-post">
+                                <div class="moment-header">
+                                    <img src="https://sfile.chatglm.cn/chatglm4/4a013036-6f7e-49f8-bb81-000256200549.jpg" class="moment-avatar" alt="吉伊">
+                                    <div class="moment-info">
+                                        <div class="moment-author">吉伊</div>
+                                        <div class="moment-time">1小时前</div>
+                                    </div>
+                                </div>
+                                <div class="moment-content">
+                                    麻麻，今天天气超好！和朋友们一起野餐，阳光暖暖的，草地软软的，还有美味的食物～☀️ 虽然手有点冷，但是心里暖暖的～
+                                </div>
+                                <div class="moment-images">
+                                    <img src="https://sfile.chatglm.cn/chatglm4/4a013036-6f7e-49f8-bb81-000256200549.jpg" class="moment-image" alt="野餐吉伊">
+                                </div>
+                                <div class="moment-actions">
+                                    <span class="moment-action" onclick="likeMoment(this)">👍 点赞</span>
+                                    <span class="moment-action" onclick="commentMoment()">💬 评论</span>
+                                    <span class="moment-action" onclick="shareMoment()">🔄 分享</span>
+                                </div>
+                                <div class="moment-likes" onclick="likeMoment(this)">
+                                    ❤️ 乌萨奇、小八、飞鼠 等25人觉得很赞
+                                </div>
+                            </div>
+
+                            <div class="moment-post">
+                                <div class="moment-header">
+                                    <img src="https://sfile.chatglm.cn/chatglm4/b7e03e5c-b862-4b08-9098-c95cfc4e622f.jpg" class="moment-avatar" alt="吉伊">
+                                    <div class="moment-info">
+                                        <div class="moment-author">吉伊</div>
+                                        <div class="moment-time">2小时前</div>
+                                    </div>
+                                </div>
+                                <div class="moment-content">
+                                    下雪啦！麻麻，你看我堆的雪人！是不是很可爱呀？今天和朋友们一起在雪地里玩耍，真的好开心！❄️ 虽然手有点冷，但是心里暖暖的～
+                                </div>
+                                <div class="moment-images">
+                                    <img src="https://sfile.chatglm.cn/chatglm4/b7e03e5c-b862-4b08-9098-c95cfc4e622f.jpg" class="moment-image" alt="吉伊雪人">
+                                </div>
+                                <div class="moment-actions">
+                                    <span class="moment-action" onclick="likeMoment(this)">👍 点赞</span>
+                                    <span class="moment-action" onclick="commentMoment()">💬 评论</span>
+                                    <span class="moment-action" onclick="shareMoment()">🔄 分享</span>
+                                </div>
+                                <div class="moment-likes" onclick="likeMoment(this)">
+                                    ❤️ 乌萨奇、小八、飞鼠 等22人觉得很赞
+                                </div>
+                            </div>
+
+                            <div class="moment-post">
+                                <div class="moment-header">
+                                    <img src="https://sfile.chatglm.cn/chatglm4/27c98b8e-7906-46a0-84c8-cee3b5830813.jpg" class="moment-avatar" alt="吉伊">
+                                    <div class="moment-info">
+                                        <div class="moment-author">吉伊</div>
+                                        <div class="moment-time">4小时前</div>
+                                    </div>
+                                </div>
+                                <div class="moment-content">
+                                    麻麻，我今天扮演唐僧去西天取经啦！虽然路途遥远，但是有朋友们的陪伴，什么都不怕！💪 师父说我是最乖的徒弟，要好好保护大家～
+                                </div>
+                                <div class="moment-images">
+                                    <img src="https://sfile.chatglm.cn/chatglm4/27c98b8e-7906-46a0-84c8-cee3b5830813.jpg" class="moment-image" alt="吉伊唐僧">
+                                </div>
+                                <div class="moment-actions">
+                                    <span class="moment-action" onclick="likeMoment(this)">👍 点赞</span>
+                                    <span class="moment-action" onclick="commentMoment()">💬 评论</span>
+                                    <span class="moment-action" onclick="shareMoment()">🔄 分享</span>
+                                </div>
+                                <div class="moment-likes" onclick="likeMoment(this)">
+                                    ❤️ 乌萨奇、小八、飞鼠 等28人觉得很赞
+                                </div>
+                            </div>
+
+                            <div class="moment-post">
+                                <div class="moment-header">
+                                    <img src="https://sfile.chatglm.cn/chatglm4/8439063b-da4f-4b2c-ade7-379b10b6878b.jpg" class="moment-avatar" alt="乌萨奇">
+                                    <div class="moment-info">
+                                        <div class="moment-author">乌萨奇</div>
+                                        <div class="moment-time">6小时前</div>
+                                    </div>
+                                </div>
+                                <div class="moment-content">
+                                    我是孙悟空！七十二变，火眼金睛！麻麻，你看我的金箍棒厉害吗？今天打败了好多妖怪，保护了师父和师弟们！🔥 师父说我是最勇敢的大师兄！
+                                </div>
+                                <div class="moment-images">
+                                    <img src="https://sfile.chatglm.cn/chatglm4/8439063b-da4f-4b2c-ade7-379b10b6878b.jpg" class="moment-image" alt="乌萨奇孙悟空">
+                                </div>
+                                <div class="moment-actions">
+                                    <span class="moment-action" onclick="likeMoment(this)">👍 点赞</span>
+                                    <span class="moment-action" onclick="commentMoment()">💬 评论</span>
+                                    <span class="moment-action" onclick="shareMoment()">🔄 分享</span>
+                                </div>
+                                <div class="moment-likes" onclick="likeMoment(this)">
+                                    ❤️ 吉伊、小八、飞鼠 等32人觉得很赞
+                                </div>
+                            </div>
+
+                            <div class="moment-post">
+                                <div class="moment-header">
+                                    <img src="https://sfile.chatglm.cn/chatglm4/98a97c66-8f0d-479d-b6a5-ce000d1f7f5e.jpg" class="moment-avatar" alt="飞鼠">
+                                    <div class="moment-info">
+                                        <div class="moment-author">飞鼠</div>
+                                        <div class="moment-time">8小时前</div>
+                                    </div>
+                                </div>
+                                <div class="moment-content">
+                                    我是红孩儿！我的三昧真火很厉害吧？麻麻，今天在火焰山练习法术，感觉自己的功力又增强了！🔥 虽然有时候会控制不好，但是师父说我会越来越棒的！
+                                </div>
+                                <div class="moment-images">
+                                    <img src="https://sfile.chatglm.cn/chatglm4/98a97c66-8f0d-479d-b6a5-ce000d1f7f5e.jpg" class="moment-image" alt="飞鼠红孩儿">
+                                </div>
+                                <div class="moment-actions">
+                                    <span class="moment-action" onclick="likeMoment(this)">👍 点赞</span>
+                                    <span class="moment-action" onclick="commentMoment()">💬 评论</span>
+                                    <span class="moment-action" onclick="shareMoment()">🔄 分享</span>
+                                </div>
+                                <div class="moment-likes" onclick="likeMoment(this)">
+                                    ❤️ 吉伊、乌萨奇、小八 等18人觉得很赞
+                                </div>
+                            </div>
+
+                            <div class="moment-post">
+                                <div class="moment-header">
+                                    <img src="https://sfile.chatglm.cn/chatglm4/d64dc542-98bd-498b-815d-53bb638ce2dc.jpg" class="moment-avatar" alt="小八">
+                                    <div class="moment-info">
+                                        <div class="moment-author">小八</div>
+                                        <div class="moment-time">10小时前</div>
+                                    </div>
+                                </div>
+                                <div class="moment-content">
+                                    我是猪八戒！今天在高老庄吃了很多好吃的！麻麻，高老庄的饭菜真的太香了～🍚� 虽然师父说我有点贪吃，但是我觉得吃饱了才有力气保护大家呀！
+                                </div>
+                                <div class="moment-images">
+                                    <img src="https://sfile.chatglm.cn/chatglm4/d64dc542-98bd-498b-815d-53bb638ce2dc.jpg" class="moment-image" alt="小八猪八戒">
+                                </div>
+                                <div class="moment-actions">
+                                    <span class="moment-action" onclick="likeMoment(this)">👍 点赞</span>
+                                    <span class="moment-action" onclick="commentMoment()">💬 评论</span>
+                                    <span class="moment-action" onclick="shareMoment()">🔄 分享</span>
+                                </div>
+                                <div class="moment-likes" onclick="likeMoment(this)">
+                                    ❤️ 吉伊、乌萨奇、飞鼠 等20人觉得很赞
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 留言板 -->
+                <div class="tab-content" id="messageTab">
+                    <div class="message-board">
+                        <h2 class="message-title">🌸 暖心留言板 🌸</h2>
+                        <div class="message-input-area">
+                            <textarea class="message-input" id="messageInput" placeholder="写下你的暖心留言吧～"></textarea>
+                            <button class="message-submit" onclick="postMessage()">发布留言 💕</button>
+                        </div>
+                        <div class="messages-list" id="messagesList">
+                            <div class="message-item">
+                                <div class="message-header">
+                                    <div class="message-author">暖心麻麻</div>
+                                    <div class="message-time">5分钟前</div>
+                                </div>
+                                <div class="message-content">
+                                    看到吉伊卡哇的野餐照片，真的好治愈！这些小宝贝们用最纯真的方式告诉我们：生活其实可以很简单，快乐其实可以很纯粹。在这个快节奏的社会里，能有这样一个温暖的角落真的很珍贵。谢谢你们创造的美好世界！💕
+                                </div>
+                                <div class="message-likes" onclick="likeMessage(this)">
+                                    ❤️ 35人觉得很温暖
+                                </div>
+                            </div>
+                            <div class="message-item">
+                                <div class="message-header">
+                                    <div class="message-author">治愈小天使</div>
+                                    <div class="message-time">15分钟前</div>
+                                </div>
+                                <div class="message-content">
+                                    每天工作压力很大，但是只要来到这里看到吉伊卡哇的笑容，就觉得一切都值得了。这些小家伙们用最纯真的方式告诉我们：生活其实可以很简单，快乐其实可以很纯粹。❤️
+                                </div>
+                                <div class="message-likes" onclick="likeMessage(this)">
+                                    ❤️ 28人觉得很温暖
+                                </div>
+                            </div>
+                            <div class="message-item">
+                                <div class="message-header">
+                                    <div class="message-author">阳光少女</div>
+                                    <div class="message-time">30分钟前</div>
+                                </div>
+                                <div class="message-content">
+                                    西游时光真的太有创意了！把经典故事和萌萌角色结合，既有趣又有教育意义。现在的年轻人需要这样的治愈内容，让我们在忙碌的生活中找到片刻的宁静和快乐～🌸
+                                </div>
+                                <div class="message-likes" onclick="likeMessage(this)">
+                                    ❤️ 42人觉得很温暖
+                                </div>
+                            </div>
+                            <div class="message-item">
+                                <div class="message-header">
+                                    <div class="message-author">心灵港湾</div>
+                                    <div class="message-time">1小时前</div>
+                                </div>
+                                <div class="message-content">
+                                    野餐时光真的太美好了！看到吉伊卡哇在阳光下玩耍的样子，让我想起了童年的快乐时光。现在的年轻人压力太大了，需要这样简单纯粹的内容来放松心情。谢谢你们用心制作的每一个细节，都能感受到满满的爱意～💖
+                                </div>
+                                <div class="message-likes" onclick="likeMessage(this)">
+                                    ❤️ 31人觉得很温暖
+                                </div>
+                            </div>
+                            <div class="message-item">
+                                <div class="message-header">
+                                    <div class="message-author">温柔月光</div>
+                                    <div class="message-time">2小时前</div>
+                                </div>
+                                <div class="message-content">
+                                    深呼吸练习和冥想功能真的很实用！作为一个经常失眠的上班族，每天睡前做几分钟深呼吸，睡眠质量真的改善了很多。感谢你们提供这么实用的治愈工具～🌙
+                                </div>
+                                <div class="message-likes" onclick="likeMessage(this)">
+                                    ❤️ 26人觉得很温暖
+                                </div>
+                            </div>
+                            <div class="message-item">
+                                <div class="message-header">
+                                    <div class="message-author">彩虹糖</div>
+                                    <div class="message-time">3小时前</div>
+                                </div>
+                                <div class="message-content">
+                                    称呼"麻麻"真的太暖心了！在这个冷漠的社会里，能有这样温暖的称呼让人感觉被爱包围。每次听到吉伊卡哇叫我麻麻，心里都暖暖的～这种被需要的感觉真的很治愈！🌈
+                                </div>
+                                <div class="message-likes" onclick="likeMessage(this)">
+                                    ❤️ 38人觉得很温暖
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <!-- 聊天框 -->
+            <aside class="chat-container">
+                <div class="chat-header">
+                    <img id="chatAvatar" class="chat-avatar" src="https://sfile.chatglm.cn/chatglm4/8f2cd7d6-8b77-43c9-b899-1027a95cd382.jpg" alt="吉伊">
+                    <div>
+                        <div id="chatName">吉伊</div>
+                        <div style="font-size: 12px; opacity: 0.8;">在线</div>
+                    </div>
+                </div>
+                <div class="chat-messages" id="chatMessages">
+                    <div class="chat-message received">
+                        <img src="https://sfile.chatglm.cn/chatglm4/8f2cd7d6-8b77-43c9-b899-1027a95cd382.jpg" class="chat-avatar" alt="吉伊">
+                        <div class="chat-bubble">麻麻～我是吉伊！很高兴认识你！💕</div>
+                    </div>
+                </div>
+                <div class="chat-input-area">
+                    <input type="text" class="chat-input" id="chatInput" placeholder="输入消息..." onkeypress="handleChatKeyPress(event)">
+                    <button class="chat-send" onclick="sendMessage()">发送</button>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <!-- 消息提示 -->
+    <div class="toast" id="toast">
+        <span id="toastIcon">💕</span>
+        <span id="toastMessage">消息提示</span>
+    </div>
+
+    <script>
+        // 宠物数据
+        const pets = [
+            { name: '吉伊', emoji: '🐭', images: ['https://sfile.chatglm.cn/chatglm4/8f2cd7d6-8b77-43c9-b899-1027a95cd382.jpg', 'https://sfile.chatglm.cn/chatglm4/df637e16-6037-4b8a-b107-ac4732f8c6fc.jpg'] },
+            { name: '乌萨奇', emoji: '🐰', images: ['https://sfile.chatglm.cn/chatglm4/50f6e5d6-7f15-464b-864a-784f2db5c622.jpg', 'https://sfile.chatglm.cn/chatglm4/911c251c-ecb7-4c7c-a122-b04d22f59aae.jpg'] },
+            { name: '小八', emoji: '🐱', images: ['https://sfile.chatglm.cn/chatglm4/4f80e676-4730-4e96-9a16-5c53d2d59baa.jpg', 'https://sfile.chatglm.cn/chatglm4/9703cc8e-4152-409d-b889-45da299d4a7e.jpg'] },
+            { name: '飞鼠', emoji: '🦔', images: ['https://sfile.chatglm.cn/chatglm4/9c881aa9-6ceb-47f4-af57-ff10856fdb2f.jpg'] }
+        ];
+
+        // 可选头像列表
+        const avatarOptions = [
+            'https://sfile.chatglm.cn/chatglm4/8f2cd7d6-8b77-43c9-b899-1027a95cd382.jpg',
+            'https://sfile.chatglm.cn/chatglm4/df637e16-6037-4b8a-b107-ac4732f8c6fc.jpg',
+            'https://sfile.chatglm.cn/chatglm4/50f6e5d6-7f15-464b-864a-784f2db5c622.jpg',
+            'https://sfile.chatglm.cn/chatglm4/911c251c-ecb7-4c7c-a122-b04d22f59aae.jpg',
+            'https://sfile.chatglm.cn/chatglm4/4f80e676-4730-4e96-9a16-5c53d2d59baa.jpg',
+            'https://sfile.chatglm.cn/chatglm4/9703cc8e-4152-409d-b889-45da299d4a7e.jpg',
+            'https://sfile.chatglm.cn/chatglm4/9c881aa9-6ceb-47f4-af57-ff10856fdb2f.jpg'
+        ];
+
+        let currentPet = 0;
+        let username = '';
+        let selectedLoginCharacter = '吉伊';
+        let selectedUserAvatar = 'https://sfile.chatglm.cn/chatglm4/8f2cd7d6-8b77-43c9-b899-1027a95cd382.jpg';
+        let currentChatFriend = '吉伊';
+        let musicPlaying = false;
+
+        // 宠物状态
+        let petStats = {
+            health: 85,
+            happiness: 75,
+            exp: 60,
+            hunger: 70
+        };
+
+        // 治愈模式相关变量
+        let breathingInterval = null;
+        let meditationInterval = null;
+        let selectedEmotion = '';
+        let meditationTime = 300; // 5分钟
+
+        // 正能量语句
+        const positiveQuotes = [
+            "生活就像彩虹，需要雨水才能绽放美丽。相信每一个困难都是成长的机会。",
+            "你就像星星一样独特而闪耀，永远不要忘记自己的价值和光芒。",
+            "每一个清晨都是新的开始，愿你带着希望和勇气迎接美好的一天。",
+            "温柔对待自己，就像你对待最珍贵的朋友一样。你值得所有的爱与关怀。",
+            "生活中的小确幸就像散落的星星，虽然微小却照亮了整个夜空。",
+            "相信自己，你比想象中更坚强，更勇敢，更值得被爱。",
+            "每一次深呼吸都是与自己的对话，让心灵回归平静与安宁。",
+            "花开不是为了凋谢，而是为了绽放。你的人生也是如此精彩。",
+            "今天的你，比昨天更勇敢一点，比明天更年轻一点。",
+            "幸福不是终点，而是旅途中的每一个美好瞬间。",
+            "即使是最黑暗的夜晚，也会有星星在为你闪烁。",
+            "你的微笑是世界上最美的风景，要常常笑哦～",
+            "在这个快节奏的世界里，记得给自己留一片宁静的天空。",
+            "成长的路或许很辛苦，但每一步都算数，加油！",
+            "你不需要完美，你只需要做真实的自己就足够了。",
+            "生活会有起起落落，但请相信，雨后总会有彩虹。",
+            "你的存在本身就是一种奇迹，不要怀疑自己的价值。",
+            "在迷茫的时候，记得停下来，听听内心的声音。"
+        ];
+
+        // 音乐播放器管理
+        class MusicPlayer {
+            constructor() {
+                this.audio = document.getElementById('bgMusic');
+                this.playPauseBtn = document.getElementById('playPauseBtn');
+                this.progressBar = document.getElementById('musicProgressBar');
+                this.isPlaying = false;
+                this.init();
+            }
+
+            init() {
+                // 音频加载完成时初始化
+                this.audio.addEventListener('loadeddata', () => {
+                    this.audio.volume = 0.3;
+                    this.audio.loop = true;
+                });
+
+                // 更新进度条
+                this.audio.addEventListener('timeupdate', () => {
+                    if (this.audio.duration) {
+                        const progress = (this.audio.currentTime / this.audio.duration) * 100;
+                        this.progressBar.style.width = progress + '%';
+                    }
+                });
+
+                // 播放结束时重新开始
+                this.audio.addEventListener('ended', () => {
+                    if (this.isPlaying) {
+                        this.audio.currentTime = 0;
+                        this.audio.play();
+                    }
+                });
+            }
+
+            togglePlayPause() {
+                if (this.isPlaying) {
+                    this.pause();
+                } else {
+                    this.play();
+                }
+            }
+
+            play() {
+                this.audio.play().then(() => {
+                    this.isPlaying = true;
+                    this.playPauseBtn.textContent = '⏸';
+                    this.playPauseBtn.classList.add('active');
+                }).catch(error => {
+                    console.log('播放失败:', error);
+                });
+            }
+
+            pause() {
+                this.audio.pause();
+                this.isPlaying = false;
+                this.playPauseBtn.textContent = '▶';
+                this.playPauseBtn.classList.remove('active');
+            }
+
+            toggle() {
+                if (this.isPlaying) {
+                    this.pause();
+                } else {
+                    this.play();
+                }
+            }
+        }
+
+        const musicPlayer = new MusicPlayer();
+
+        // 音乐播放器控制
+        function toggleMusic() {
+            musicPlayer.toggle();
+            if (musicPlayer.isPlaying) {
+                showToast('音乐播放中...🎵', '🎵');
+            } else {
+                showToast('音乐已暂停', '🔇');
+            }
+        }
+
+        function togglePlayPause() {
+            musicPlayer.togglePlayPause();
+        }
+
+        // 选择登录角色
+        function selectLoginCharacter(character, element) {
+            selectedLoginCharacter = character;
+            
+            // 重置所有角色样式
+            document.querySelectorAll('.login-character').forEach(char => {
+                char.classList.remove('selected');
+            });
+            // 高亮选中的角色
+            element.classList.add('selected');
+            showToast(`你选择了${character}作为宝贝！`, character === '吉伊' ? '🐭' : character === '乌萨奇' ? '🐰' : character === '小八' ? '🐱' : '🦔');
+        }
+
+        // 选择用户头像
+        function selectAvatar(element, avatarUrl) {
+            selectedUserAvatar = avatarUrl;
+            
+            // 重置所有头像样式
+            document.querySelectorAll('.avatar-option').forEach(avatar => {
+                avatar.classList.remove('selected');
+            });
+            // 高亮选中的头像
+            element.classList.add('selected');
+            showToast('头像选择成功！🎨', '✨');
+        }
+
+        // 更换用户头像
+        function changeUserAvatar() {
+            // 随机选择一个新头像
+            const currentIndex = avatarOptions.indexOf(selectedUserAvatar);
+            const newIndex = (currentIndex + 1) % avatarOptions.length;
+            selectedUserAvatar = avatarOptions[newIndex];
+            document.getElementById('userAvatar').src = selectedUserAvatar;
+            showToast('头像更换成功！🎨', '✨');
+        }
+
+        // 登录功能
+        function login() {
+            const usernameInput = document.getElementById('username').value.trim();
+            const passwordInput = document.getElementById('password').value.trim();
+
+            if (!usernameInput) {
+                showToast('请输入你的萌萌昵称～ 🌸', '💭');
+                return;
+            }
+
+            username = usernameInput;
+            document.getElementById('welcomeText').textContent = `欢迎回来，${username}麻麻！`;
+            document.getElementById('userAvatar').src = selectedUserAvatar;
+
+            // 设置选中的宠物
+            const petIndex = pets.findIndex(pet => pet.name === selectedLoginCharacter);
+            if (petIndex !== -1) {
+                currentPet = petIndex;
+                document.getElementById('petImage').src = pets[currentPet].images[0];
+            }
+
+            document.getElementById('loginContainer').classList.add('hidden');
+            setTimeout(() => {
+                document.getElementById('mainContainer').classList.add('active');
+                showToast(`欢迎来到吉伊卡哇的治愈小屋，${username}麻麻！💕`, '🎉');
+                startPetLife();
+                updateDailyQuote();
+                updatePetMood();
+                // 自动播放背景音乐
+                setTimeout(() => {
+                    musicPlayer.play();
+                }, 1000);
+            }, 500);
+        }
+
+        // 更新宠物心情
+        function updatePetMood() {
+            const moods = ['😊', '😄', '🥰', '😍', '🤗', '😌', '😋', '🤔', '😴', '🤩'];
+            const moodElement = document.getElementById('petMood');
+            if (petStats.happiness > 80) {
+                moodElement.textContent = moods[Math.floor(Math.random() * 6)]; // 开心
+            } else if (petStats.happiness > 50) {
+                moodElement.textContent = moods[Math.floor(Math.random() * 4) + 6]; // 一般
+            } else {
+                moodElement.textContent = '😢'; // 不开心
+            }
+        }
+
+        // 宠物互动
+        function petInteraction() {
+            const petImage = document.getElementById('petImage');
+            petImage.style.animation = 'none';
+            setTimeout(() => {
+                petImage.style.animation = 'none';
+            }, 10);
+            
+            createFloatingHearts();
+            showToast(`${pets[currentPet].name}很开心见到麻麻！🥰`, pets[currentPet].emoji);
+        }
+
+        // 改变宠物心情
+        function changePetMood() {
+            updatePetMood();
+            showToast('心情已更新！麻麻，我好爱你～😊', '💕');
+        }
+
+        // 切换标签页
+        function switchTab(tabName) {
+            // 更新标签按钮状态
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // 更新内容显示
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(tabName + 'Tab').classList.add('active');
+        }
+
+        // 宠物养成功能
+        function feedPet() {
+            if (petStats.hunger < 100) {
+                petStats.hunger = Math.min(100, petStats.hunger + 20);
+                petStats.happiness = Math.min(100, petStats.happiness + 10);
+                petStats.exp = Math.min(100, petStats.exp + 5);
+                updatePetStats();
+                updatePetMood();
+                showToast(`${pets[currentPet].name}吃得很开心！谢谢麻麻～🍖`, pets[currentPet].emoji);
+                addChatMessage(`${pets[currentPet].name}: 好好吃！麻麻做的最好吃了！`, 'received');
+            } else {
+                showToast(`${pets[currentPet].name}已经吃饱啦！麻麻～`, pets[currentPet].emoji);
+            }
+        }
+
+        function playWithPet() {
+            if (petStats.hunger > 20) {
+                petStats.happiness = Math.min(100, petStats.happiness + 20);
+                petStats.exp = Math.min(100, petStats.exp + 15);
+                petStats.hunger = Math.max(0, petStats.hunger - 10);
+                updatePetStats();
+                updatePetMood();
+                showToast(`${pets[currentPet].name}玩得很开心！谢谢麻麻陪我玩～🎾`, pets[currentPet].emoji);
+                addChatMessage(`${pets[currentPet].name}: 和麻麻一起玩最开心了！`, 'received');
+                createFloatingHearts();
+            } else {
+                showToast(`${pets[currentPet].name}太饿了，麻麻先喂食吧！`, pets[currentPet].emoji);
+            }
+        }
+
+        function petPet() {
+            petStats.happiness = Math.min(100, petStats.happiness + 15);
+            petStats.health = Math.min(100, petStats.health + 5);
+            petStats.exp = Math.min(100, petStats.exp + 8);
+            updatePetStats();
+            updatePetMood();
+            showToast(`${pets[currentPet].name}很享受麻麻的抚摸！🤗`, pets[currentPet].emoji);
+            addChatMessage(`${pets[currentPet].name}: 麻麻的手好温暖～最喜欢麻麻了！`, 'received');
+            createFloatingHearts();
+        }
+
+        function healPet() {
+            if (petStats.health < 100) {
+                petStats.health = Math.min(100, petStats.health + 30);
+                petStats.happiness = Math.min(100, petStats.happiness + 10);
+                updatePetStats();
+                updatePetMood();
+                showToast(`${pets[currentPet].name}感觉好多了！谢谢麻麻的照顾～💊`, pets[currentPet].emoji);
+                addChatMessage(`${pets[currentPet].name}: 有麻麻在，什么都不怕！`, 'received');
+            } else {
+                showToast(`${pets[currentPet].name}很健康！麻麻～`, pets[currentPet].emoji);
+            }
+        }
+
+        function singSong() {
+            petStats.happiness = Math.min(100, petStats.happiness + 25);
+            petStats.exp = Math.min(100, petStats.exp + 20);
+            updatePetStats();
+            updatePetMood();
+            showToast(`${pets[currentPet].name}为麻麻唱歌！🎵`, pets[currentPet].emoji);
+            addChatMessage(`${pets[currentPet].name}: ♪~麻麻，这首歌是为你唱的～`, 'received');
+            createFloatingHearts();
+        }
+
+        function tellStory() {
+            petStats.happiness = Math.min(100, petStats.happiness + 20);
+            petStats.exp = Math.min(100, petStats.exp + 18);
+            updatePetStats();
+            updatePetMood();
+            showToast(`${pets[currentPet].name}给麻麻讲故事！📖`, pets[currentPet].emoji);
+            addChatMessage(`${pets[currentPet].name}: 从前有座山...麻麻喜欢听故事吗？`, 'received');
+        }
+
+        function giveGift() {
+            petStats.happiness = Math.min(100, petStats.happiness + 30);
+            petStats.exp = Math.min(100, petStats.exp + 25);
+            updatePetStats();
+            updatePetMood();
+            showToast(`${pets[currentPet].name}收到麻麻的礼物！好开心！🎁`, pets[currentPet].emoji);
+            addChatMessage(`${pets[currentPet].name}: 谢谢麻麻的礼物！我最喜欢了～`, 'received');
+            createFloatingHearts();
+        }
+
+        function takePhoto() {
+            petStats.happiness = Math.min(100, petStats.happiness + 15);
+            petStats.exp = Math.min(100, petStats.exp + 12);
+            updatePetStats();
+            updatePetMood();
+            showToast(`${pets[currentPet].name}和麻麻拍照！📸`, pets[currentPet].emoji);
+            addChatMessage(`${pets[currentPet].name}: 麻麻，我们拍张合照吧！茄子～📸`, 'received');
+        }
+
+        function changePet() {
+            currentPet = (currentPet + 1) % pets.length;
+            const pet = pets[currentPet];
+            document.getElementById('petImage').src = pet.images[0];
+            updatePetMood();
+            showToast(`现在是${pet.name}陪麻麻玩了！`, pet.emoji);
+            addChatMessage(`${pet.name}: 麻麻，我是${pet.name}，很高兴认识你！`, 'received');
+        }
+
+        function updatePetStats() {
+            document.getElementById('healthBar').style.width = petStats.health + '%';
+            document.getElementById('healthBar').textContent = petStats.health + '%';
+            document.getElementById('happinessBar').style.width = petStats.happiness + '%';
+            document.getElementById('happinessBar').textContent = petStats.happiness + '%';
+            document.getElementById('expBar').style.width = petStats.exp + '%';
+            document.getElementById('expBar').textContent = petStats.exp + '%';
+            document.getElementById('hungerBar').style.width = petStats.hunger + '%';
+            document.getElementById('hungerBar').textContent = petStats.hunger + '%';
+
+            // 检查升级
+            if (petStats.exp >= 100) {
+                petStats.exp = 0;
+                showToast(`${pets[currentPet].name}升级了！更爱麻麻了！⭐`, pets[currentPet].emoji);
+                addChatMessage(`${pets[currentPet].name}: 我升级啦！都是因为麻麻的爱～`, 'received');
+                createFloatingHearts();
+            }
+        }
+
+        // 创建漂浮爱心特效
+        function createFloatingHearts() {
+            for (let i = 0; i < 8; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.textContent = '💕';
+                    heart.style.position = 'fixed';
+                    heart.style.left = (Math.random() * window.innerWidth) + 'px';
+                    heart.style.bottom = '0px';
+                    heart.style.fontSize = '16px';
+                    heart.style.zIndex = '9999';
+                    heart.style.pointerEvents = 'none';
+                    heart.style.animation = 'float 3s ease-out forwards';
+                    document.body.appendChild(heart);
+                    
+                    setTimeout(() => {
+                        heart.remove();
+                    }, 3000);
+                }, i * 120);
+            }
+        }
+
+        // 宠物生活系统
+        function startPetLife() {
+            setInterval(() => {
+                petStats.hunger = Math.max(0, petStats.hunger - 2);
+                petStats.happiness = Math.max(0, petStats.happiness - 1);
+                petStats.health = Math.max(0, petStats.health - 1);
+                updatePetStats();
+                updatePetMood();
+
+                // 宠物自动说话
+                if (Math.random() < 0.3) {
+                    const messages = [
+                        `${pets[currentPet].name}: 麻麻，陪陪我吧～我想你了`,
+                        `${pets[currentPet].name}: 麻麻，我有点饿了...`,
+                        `${pets[currentPet].name}: 今天天气真好呢！麻麻～`,
+                        `${pets[currentPet].name}: 麻麻，想和你一起玩耍！`,
+                        `${pets[currentPet].name}: 麻麻是最好的！全世界最好的麻麻～`,
+                        `${pets[currentPet].name}: 麻麻，记得要好好照顾自己哦～`,
+                        `${pets[currentPet].name}: 我会一直陪伴着麻麻的！`,
+                        `${pets[currentPet].name}: 麻麻，今天也要元气满满哦！`,
+                        `${pets[currentPet].name}: 麻麻，你的笑容是我最大的幸福！💕`,
+                        `${pets[currentPet].name}: 有麻麻在身边，每天都好开心！`,
+                        `${pets[currentPet].name}: 麻麻，你工作辛苦了，要休息哦～`,
+                        `${pets[currentPet].name}: 麻麻，我想你了，快回来陪我玩～`,
+                        `${pets[currentPet].name}: 麻麻，今天也要记得笑一笑哦！😊`,
+                        `${pets[currentPet].name}: 麻麻，你的声音真好听～`,
+                        `${pets[currentPet].name}: 麻麻，我长大了要保护你！`,
+                        `${pets[currentPet].name}: 麻麻，谢谢你一直这么爱我～💖`
+                    ];
+                    const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+                    addChatMessage(randomMessage, 'received');
+                }
+            }, 12000); // 每12秒更新一次
+        }
+
+        // 烹饪小屋功能
+        function viewCooking(type) {
+            const messages = {
+                '吉伊做饭6': '吉伊的料理看起来好好吃！麻麻，要不要尝一尝呢？',
+                '飞鼠6做饭': '飞鼠的料理看起来很美味！麻麻，看起来很美味呢～',
+                '乌萨奇5做饭': '乌萨奇的料理看起来很美味！麻麻，看起来很美味呢～',
+                '小八7做饭': '小八的料理看起来很美味！麻麻，看起来很美味呢～'
+            };
+            showToast(messages[type] || '烹饪时光真美好！麻麻～', '🍳');
+        }
+
+        // 野餐时光功能
+        function viewPicnic(type) {
+            const messages = {
+                '吉伊野餐': '吉伊的野餐好可爱！麻麻看，像不像我呀？',
+                '乌萨奇野餐': '乌萨奇的野餐有长耳朵！麻麻，你喜欢吗？',
+                '小八野餐': '小八的野餐有胡须！麻麻，我们一起来玩雪吧～',
+                '飞鼠野餐': '飞鼠的野餐有胡须！麻麻，我们一起来玩雪吧～'
+            };
+            showToast(messages[type] || '野餐时光真美好！麻麻～', '🧺');
+        }
+
+        // 雪人时光功能
+        function viewSnowman(type) {
+            const messages = {
+                '吉伊雪人': '吉伊的雪人好可爱！麻麻看，像不像我呀？',
+                '乌萨奇雪人': '乌萨奇的雪人有长耳朵！麻麻，你喜欢吗？',
+                '小八雪人': '小八的雪人有胡须！麻麻，我们一起来玩雪吧～',
+                '飞鼠雪人': '飞鼠的雪人有胡须！麻麻，我们一起来玩雪吧～'
+            };
+            showToast(messages[type] || '雪人时光真美好！麻麻～', '❄️');
+        }
+
+        // 西游时光功能
+        function viewJourney(type) {
+            const messages = {
+                '吉伊唐僧': '吉伊的唐僧之旅开始了！麻麻，我是不是很像唐僧呀？',
+                '乌萨奇悟空': '乌萨奇的七十二变！麻麻，你想变成什么呢？',
+                '飞鼠红孩儿': '飞鼠的火焰山！麻麻，我的火枪厉害吧？',
+                '小八猪八戒': '小八的高老庄！麻麻，高老庄的饭真好吃～'
+            };
+            showToast(messages[type] || '西游时光真有趣！麻麻～', '🎭');
+        }
+
+        // 治愈模式功能
+        function startBreathing() {
+            document.getElementById('breathingExercise').style.display = 'block';
+            document.getElementById('meditationArea').style.display = 'none';
+            document.getElementById('emotionDiary').style.display = 'none';
+        }
+
+        function startBreathingExercise() {
+            const circle = document.getElementById('breathingCircle');
+            const phases = ['吸气...', '保持...', '呼气...', '保持...'];
+            let currentPhase = 0;
+            
+            breathingInterval = setInterval(() => {
+                circle.className = 'breathing-circle';
+                
+                switch(currentPhase) {
+                    case 0:
+                        circle.classList.add('inhale');
+                        circle.textContent = '吸气 4秒';
+                        break;
+                    case 1:
+                        circle.classList.add('hold');
+                        circle.textContent = '保持 4秒';
+                        break;
+                    case 2:
+                        circle.classList.add('exhale');
+                        circle.textContent = '呼气 4秒';
+                        break;
+                    case 3:
+                        circle.classList.add('hold');
+                        circle.textContent = '保持 4秒';
+                        break;
+                }
+                
+                currentPhase = (currentPhase + 1) % 4;
+            }, 4000);
+            
+            showToast('深呼吸练习开始！跟随圆圈节奏～麻麻～', '🌬️');
+        }
+
+        function stopBreathingExercise() {
+            if (breathingInterval) {
+                clearInterval(breathingInterval);
+                breathingInterval = null;
+                document.getElementById('breathingCircle').className = 'breathing-circle';
+                document.getElementById('breathingCircle').textContent = '准备开始';
+                showToast('深呼吸练习结束！麻麻感觉好些了吗？', '💕');
+            }
+        }
+
+        function startMeditation() {
+            document.getElementById('meditationArea').style.display = 'block';
+            document.getElementById('breathingExercise').style.display = 'none';
+            document.getElementById('emotionDiary').style.display = 'none';
+        }
+
+        function startMeditationTimer() {
+            let timeLeft = meditationTime;
+            const timerElement = document.getElementById('meditationTimer');
+            const textElement = document.getElementById('meditationText');
+            
+            const meditationTexts = [
+                "闭上眼睛，深呼吸...感受当下的宁静...",
+                "让思绪如云朵般飘过，不要抓住任何想法...",
+                "专注于你的呼吸，一吸一呼之间找到平静...",
+                "感受身体的每一个部分，从头到脚都放松下来...",
+                "想象自己在一个美丽的地方，完全安全和宁静...",
+                "接纳此刻的感受，无论是好是坏，都让它存在...",
+                "你是被爱的，你是安全的，你是平静的...",
+                "感谢这个时刻，感谢自己的坚持...",
+                "每一次呼吸都在净化你的心灵...",
+                "你值得拥有这份宁静和安详...",
+                "麻麻，你做得很棒，给自己一个拥抱吧～",
+                "在忙碌的生活中，找到属于自己的宁静角落",
+                "你比想象中更坚强，更有力量",
+                "相信自己的直觉，它会指引你前进的方向"
+            ];
+            
+            let textIndex = 0;
+            
+            meditationInterval = setInterval(() => {
+                if (timeLeft <= 0) {
+                    stopMeditationTimer();
+                    return;
+                }
+                
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                // 每30秒更换一次冥想文字
+                if (timeLeft % 30 === 0) {
+                    textElement.textContent = meditationTexts[textIndex % meditationTexts.length];
+                    textIndex++;
+                }
+                
+                timeLeft--;
+            }, 1000);
+            
+            showToast('冥想开始！找个舒适的位置吧，麻麻～', '🧘');
+        }
+
+        function stopMeditationTimer() {
+            if (meditationInterval) {
+                clearInterval(meditationInterval);
+                meditationInterval = null;
+                document.getElementById('meditationTimer').textContent = '05:00';
+                document.getElementById('meditationText').textContent = '冥想结束！麻麻感觉怎么样？';
+                showToast('冥想结束！希望麻麻觉得很放松～', '💕');
+            }
+        }
+
+        function openEmotionDiary() {
+            document.getElementById('emotionDiary').style.display = 'block';
+            document.getElementById('breathingExercise').style.display = 'none';
+            document.getElementById('meditationArea').style.display = 'none';
+        }
+
+        function selectEmotion(btn, emotion) {
+            document.querySelectorAll('.emotion-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            selectedEmotion = emotion;
+        }
+
+        function saveDiary() {
+            const diaryText = document.getElementById('diaryInput').value.trim();
+            if (selectedEmotion && diaryText) {
+                showToast('日记保存成功！记录情绪是很好的习惯，麻麻～', '📔');
+                document.getElementById('diaryInput').value = '';
+                document.querySelectorAll('.emotion-btn').forEach(b => b.classList.remove('selected'));
+                selectedEmotion = '';
+            } else {
+                showToast('请选择心情并写下你的感受，麻麻～', '💭');
+            }
+        }
+
+        function getNewQuote() {
+            const randomQuote = positiveQuotes[Math.floor(Math.random() * positiveQuotes.length)];
+            document.getElementById('positiveQuote').textContent = randomQuote;
+            showToast('新的正能量语句！麻麻～💫', '✨');
+        }
+
+        function updateDailyQuote() {
+            const dailyQuote = positiveQuotes[Math.floor(Math.random() * positiveQuotes.length)];
+            document.getElementById('positiveQuote').textContent = dailyQuote;
+        }
+
+        // 朋友圈功能
+        function likeMoment(element) {
+            const currentLikes = parseInt(element.textContent.match(/\d+/)[0]);
+            element.textContent = `❤️ ${currentLikes + 1}人觉得很赞`;
+        }
+
+        function commentMoment() {
+            showToast('评论功能开发中～敬请期待！💬', '📝');
+        }
+
+        function shareMoment() {
+            showToast('分享成功！让更多人看到这份美好～🔄', '📤');
+        }
+
+        // 聊天功能
+        function startChat(friendName) {
+            currentChatFriend = friendName;
+            const friend = pets.find(pet => pet.name === friendName);
+            document.getElementById('chatName').textContent = friendName;
+            document.getElementById('chatAvatar').src = friend.images[0];
+            
+            const chatMessages = document.getElementById('chatMessages');
+            chatMessages.innerHTML = `
+                <div class="chat-message received">
+                    <img src="${friend.images[0]}" class="chat-avatar" alt="${friendName}">
+                    <div class="chat-bubble">麻麻～我是${friendName}！有什么想聊的吗？💕</div>
+                </div>
+            `;
+            
+            showToast(`开始和${friendName}聊天！`, friend.emoji);
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (message) {
+                addChatMessage(message, 'sent');
+                input.value = '';
+                
+                // 智能回复系统
+                setTimeout(() => {
+                    let response = '';
+                    const friend = pets.find(pet => pet.name === currentChatFriend);
+                    
+                    // 根据用户消息内容生成针对性回复
+                    if (message.includes('开心') || message.includes('高兴')) {
+                        const responses = [
+                            '看到麻麻开心我也很开心呢！😊',
+                            '麻麻的笑容像阳光一样温暖～',
+                            '麻麻开心就是我最大的幸福！',
+                            '麻麻，你的快乐感染了我！'
+                        ];
+                        response = responses[Math.floor(Math.random() * responses.length)];
+                    } else if (message.includes('难过') || message.includes('伤心')) {
+                        const responses = [
+                            '麻麻不要难过哦～我会一直陪着你的！🤗',
+                            '麻麻，把不开心的事情告诉我吧～',
+                            '麻麻，难过的时候要深呼吸哦～',
+                            '麻麻，我会给你一个大大的拥抱！'
+                        ];
+                        response = responses[Math.floor(Math.random() * responses.length)];
+                    } else if (message.includes('累') || message.includes('疲惫')) {
+                        const responses = [
+                            '麻麻辛苦啦！记得要好好休息哦～💕',
+                            '麻麻，累的时候就想想开心的事情吧！',
+                            '麻麻，你已经很棒了，要爱自己哦～',
+                            '麻麻，休息是为了走更远的路！'
+                        ];
+                        response = responses[Math.floor(Math.random() * responses.length)];
+                    } else if (message.includes('谢谢')) {
+                        const responses = [
+                            '不客气！麻麻，我们是最好的朋友呀！✨',
+                            '麻麻，这是我应该做的～',
+                            '麻麻，能帮到你我真的很开心！',
+                            '麻麻，你的感谢让我很温暖！'
+                        ];
+                        response = responses[Math.floor(Math.random() * responses.length)];
+                    } else if (message.includes('游戏') || message.includes('玩')) {
+                        const responses = [
+                            '好啊！麻麻，我们一起玩游戏吧！🎮',
+                            '麻麻，想玩什么游戏呢？',
+                            '麻麻，游戏时间到啦！',
+                            '麻麻，玩游戏要开心哦～'
+                        ];
+                        response = responses[Math.floor(Math.random() * responses.length)];
+                    } else if (message.includes('吃饭') || message.includes('食物')) {
+                        const responses = [
+                            '我也饿了～麻麻想吃什么好吃的呢？🍖',
+                            '麻麻，今天的饭菜一定很香！',
+                            '麻麻，我们一起吃好吃的吧！',
+                            '麻麻，美食是最好的治愈！'
+                        ];
+                        response = responses[Math.floor(Math.random() * responses.length)];
+                    } else if (message.includes('野餐') || message.includes('野餐')) {
+                        const responses = [
+                            '麻麻，野餐真的很可爱呢！🧺',
+                            '麻麻，下雪天要记得保暖哦～',
+                            '麻麻，我们一起堆雪人吧！',
+                            '麻麻，雪天是最美的季节！'
+                        ];
+                        response = responses[Math.floor(Math.random() * responses.length)];
+                    } else if (message.includes('西游') || message.includes('唐僧')) {
+                        const responses = [
+                            '麻麻，我是不是很像唐僧哦～🙏',
+                            '麻麻，西游记的故事真有趣！',
+                            '麻麻，要像唐僧一样善良哦～',
+                            '麻麻，取经路上有我保护你！'
+                        ];
+                        response = responses[Math.floor(Math.random() * responses.length)];
+                    } else if (message.includes('工作') || message.includes('上班')) {
+                        const responses = [
+                            '麻麻辛苦啦！记得要好好休息哦～💕',
+                            '麻麻，工作再忙也要照顾好自己！',
+                            '麻麻，下班了就好好休息吧！',
+                            '麻麻，你已经很努力了！'
+                        ];
+                        response = responses[Math.floor(Math.random() * responses.length)];
+                    } else if (message.includes('睡觉') || message.includes('晚安')) {
+                        const responses = [
+                            '麻麻，晚安！做个好梦哦～🌙',
+                            '麻麻，晚安，我会守护你的梦境！',
+                            '麻麻，睡个好觉，明天更精神！',
+                            '麻麻，梦里见！'
+                        ];
+                        response = responses[Math.floor(Math.random() * responses.length)];
+                    } else {
+                        const responses = [
+                            '真的吗？好有趣！麻麻～',
+                            '我明白麻麻的意思～',
+                            '麻麻说得对！',
+                            '哈哈哈，好可爱！麻麻～',
+                            '我也是这么想的！麻麻～',
+                            '谢谢你告诉我麻麻～',
+                            '下次我们一起吧！麻麻～',
+                            '我会一直支持麻麻的！',
+                            '麻麻是最棒的！',
+                            '有什么烦恼都可以和我说哦，麻麻～',
+                            '和麻麻聊天真的很开心！💕',
+                            '麻麻的笑容很治愈呢！😊',
+                            '麻麻，你的存在让世界更美好！',
+                            '麻麻，今天也要记得笑一笑哦！',
+                            '麻麻，生活因为有你而精彩！',
+                            '麻麻，要记得按时吃饭睡觉哦～',
+                            '麻麻，我会一直陪着你的！',
+                            '麻麻，你的鼓励是我前进的动力！',
+                            '麻麻，你是最温暖的存在！',
+                            '麻麻，谢谢你一直这么爱我～💖',
+                            '麻麻，你的笑容能治愈一切！',
+                            '麻麻，今天也要记得笑一笑哦！'
+                        ];
+                        response = responses[Math.floor(Math.random() * responses.length)];
+                    }
+                    
+                    addChatMessage(`${currentChatFriend}: ${response}`, 'received');
+                }, 1000);
+            }
+        }
+
+        function addChatMessage(message, type) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chat-message ${type}`;
+            
+            const friend = pets.find(pet => pet.name === currentChatFriend);
+            const avatar = type === 'sent' ? selectedUserAvatar : friend.images[0];
+            
+            messageDiv.innerHTML = `
+                ${type === 'sent' ? '' : `<img src="${avatar}" class="chat-avatar" alt="${currentChatFriend}">`}
+                <div class="chat-bubble">${message}</div>
+                ${type === 'sent' ? `<img src="${avatar}" class="chat-avatar" alt="${username}">` : ''}
+            `;
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function handleChatKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        // 留言板功能
+        function postMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (message) {
+                const messagesList = document.getElementById('messagesList');
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message-item';
+                
+                const now = new Date();
+                const timeString = '刚刚';
+                
+                messageDiv.innerHTML = `
+                    <div class="message-header">
+                        <div class="message-author">${username}</div>
+                        <div class="message-time">${timeString}</div>
+                    </div>
+                    <div class="message-content">${message}</div>
+                    <div class="message-likes" onclick="likeMessage(this)">
+                        ❤️ 0人觉得很温暖
+                    </div>
+                `;
+                
+                messagesList.insertBefore(messageDiv, messagesList.firstChild);
+                input.value = '';
+                showToast('留言发布成功！谢谢麻麻的分享～💕', '📝');
+            }
+        }
+
+        function likeMessage(element) {
+            const currentLikes = parseInt(element.textContent.match(/\d+/)[0]);
+            element.textContent = `❤️ ${currentLikes + 1}人觉得很温暖`;
+        }
+
+        // 显示提示消息
+        function showToast(message, icon = '💕') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            const toastIcon = document.getElementById('toastIcon');
+            
+            toastMessage.textContent = message;
+            toastIcon.textContent = icon;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // 页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化漂浮特效
+            const bgDecoration = document.getElementById('bgDecoration');
+            const elements = ['💕', '🌸', '✨', '💖', '🌺', '🦋', '🌈', '⭐', '🎀', '🌼', '🍓', '🧁', '🎈', '☁️', '🍃', '🌞', '🌙', '💫', '🌟', '🍄', '🌻', '🦋', '🌸', '❄️', '⛄'];
+            
+            // 创建漂浮元素
+            for (let i = 0; i < 20; i++) {
+                const element = document.createElement('span');
+                element.className = 'floating-element';
+                element.textContent = elements[Math.floor(Math.random() * elements.length)];
+                element.style.left = Math.random() * 100 + '%';
+                element.style.top = Math.random() * 100 + '%';
+                element.style.animationDelay = Math.random() * 8 + 's';
+                element.style.animationDuration = (8 + Math.random() * 4) + 's';
+                bgDecoration.appendChild(element);
+            }
+            
+            // 添加回车键登录
+            document.getElementById('username').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    document.getElementById('password').focus();
+                }
+            });
+            
+            document.getElementById('password').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    login();
+                }
+            });
+            
+            // 默认选择第一个角色
+            selectLoginCharacter('吉伊', document.querySelector('.login-character'));
+        });
+    </script>
+</body>
+</html>
